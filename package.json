@@ -1,0 +1,16 @@
+{
+  "name": "falling-sand",
+  "version": "1.0.0",
+  "description": "falling sand test",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite dev"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "two.js": "^0.8.13",
+    "vite": "^5.1.6"
+  }
+}
