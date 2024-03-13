@@ -14,7 +14,7 @@ let grid;
 let w = 25;
 let cols, rows;
 function setup() {
-    createCanvas(1000, 1000)
+    createCanvas(400, 400)
     cols = width / w;
     rows = height / w;
     grid = make2DArray(cols, rows);
