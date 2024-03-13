@@ -1,50 +1,72 @@
-// Make an instance of two and place it on the page.
-var params = {
-    fullscreen: true,
-};
-var elem = document.body;
-var two = new Two(params).appendTo(elem);
 
-var rectWidth = 30;
-var rectHeight = 30;
-var startX = 30;
-var startY = 30;
+function make2DArray(cols, rows) {
+    let arr = new Array(cols)
+    for (let i = 0; i < arr.length; i++) {
+        arr[i] = new Array(rows)
+        for (let j = 0; j < arr[i].length; j++) {
+            arr[i][j] = 0
+        }
+    }
+    return arr
+}
 
-var rectangles = [];
-
-for (var i = 0; i < 25; i++) {
-    rectangles[i] = [];
-    var x = startX + i * (rectWidth + 3); 
-    
-    for (var j = 0; j < 25; j++) {
-        var y = startY + j * (rectHeight + 3); 
-        
-        var rect = two.makeRectangle(x, y, rectWidth, rectHeight);
-        rect.fill = "#c9c9c9";
-        rect.opacity = 0.75;
-        rect.stroke = "rgb(0, 0, 0)";
-        
-        rectangles[i][j] = rect;
+let grid;
+let w = 25;
+let cols, rows;
+function setup() {
+    createCanvas(1000, 1000)
+    cols = width / w;
+    rows = height / w;
+    grid = make2DArray(cols, rows);
+    for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+            grid[i][j] = 0;
+        }
     }
 }
 
-elem.addEventListener('mousemove', function(event) {
-    var mouseX = event.clientX - elem.getBoundingClientRect().left;
-    var mouseY = event.clientY - elem.getBoundingClientRect().top;
+function mousePressed() {
+    let col = floor(mouseX / w)
+    let row = floor(mouseY / w)
+    grid[col][row] = 1
+}
 
-    for (var i = 0; i < 25; i++) {
-        for (var j = 0; j < 25; j++) {
-            var rect = rectangles[i][j];
-            
-            if (mouseX > rect.position.x - rect.width / 2 && 
-                mouseX < rect.position.x + rect.width / 2 &&
-                mouseY > rect.position.y - rect.height / 2 &&
-                mouseY < rect.position.y + rect.height / 2) {
-                rect.fill = "#000000"; 
-            } else {
-                rect.fill = "#c9c9c9"; 
+function draw() {
+    background(0)
+    for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+            stroke(255)
+            fill(grid[i][j] * 255)
+            square(i * w, j * w, w)
+        }
+    }
+
+    let nextGrid = make2DArray(cols, rows);
+    for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+            let state = grid[i][j];
+            if (state === 1) {
+                let dir = random(1) < 0.5 ? -1 : 1
+                let neighborBelow = grid[i][j + 1]
+                let neighborBelowA, neighborBelowB
+                if (i + dir >= 0 && i + dir <= cols - 1) {
+                    neighborBelowA = grid[i + dir][j + 1]
+                }
+                if (i - dir >= 0 && i - dir <= cols - 1) {
+                    neighborBelowB = grid[i - dir][j + 1]
+                }
+
+                if (neighborBelow === 0) {
+                    nextGrid[i][j + 1] = 1
+                } else if (neighborBelowA === 0) {
+                    nextGrid[i + dir][j] = 1
+                } else if (neighborBelowB === 0) {
+                    nextGrid[i - dir][j] = 1
+                } else {
+                    nextGrid[i][j] = 1
+                }
             }
         }
     }
-    two.update();
-});
+    grid = nextGrid
+}
