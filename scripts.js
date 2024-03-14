@@ -11,10 +11,12 @@ function make2DArray(cols, rows) {
 }
 
 let grid;
-let w = 25;
+let w = 5;
 let cols, rows;
+let hueValue = 200;
 function setup() {
-    createCanvas(400, 400)
+    createCanvas(600, 600)
+    colorMode(HSB, 360, 255, 255);
     cols = width / w;
     rows = height / w;
     grid = make2DArray(cols, rows);
@@ -25,7 +27,7 @@ function setup() {
     }
 }
 
-function mousePressed() {
+function mouseDragged() {
     let col = floor(mouseX / w)
     let row = floor(mouseY / w)
     grid[col][row] = 1
@@ -33,11 +35,22 @@ function mousePressed() {
 
 function draw() {
     background(0)
+
+    if (mouseIsPressed) {
+        hueValue += 0.5;
+        if (hueValue > 360) {
+            hueValue = 1;
+        }
+    }
+
     for (let i = 0; i < cols; i++) {
         for (let j = 0; j < rows; j++) {
-            stroke(255)
-            fill(grid[i][j] * 255)
-            square(i * w, j * w, w)
+            noStroke()
+            if (grid[i][j] > 0) {
+                fill(hueValue, 255, 255)
+                square(i * w, j * w, w)
+            }
+
         }
     }
 
