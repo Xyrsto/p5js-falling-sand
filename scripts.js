@@ -90,6 +90,7 @@ function draw() {
     // Increases velocity constantly, if the cell below is empty, moves the cell down and resets velocity
     for (let i = 0; i < cols; i++) {
         for (let j = rows - 1; j >= 0; j--) {
+            velocity[i][j] = 0;
             if (grid[i][j] === 1) {
                 velocity[i][j] += 0.1; 
                 if(velocity[i][j] > terminal_velocity) {
