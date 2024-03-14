@@ -14,15 +14,18 @@ let grid;
 let w = 5;
 let cols, rows;
 let hueValue = 200;
+let velocity
 function setup() {
     createCanvas(600, 600)
     colorMode(HSB, 360, 255, 255);
     cols = width / w;
     rows = height / w;
     grid = make2DArray(cols, rows);
+    velocity = make2DArray(cols, rows);
     for (let i = 0; i < cols; i++) {
         for (let j = 0; j < rows; j++) {
             grid[i][j] = 0;
+            velocity[i][j] = 0; 
         }
     }
 }
@@ -82,4 +85,19 @@ function draw() {
         }
     }
     grid = nextGrid
+
+    // Increases velocity constantly, if the cell below is empty, moves the cell down and resets velocity
+    for (let i = 0; i < cols; i++) {
+        for (let j = rows - 1; j >= 0; j--) {
+            if (grid[i][j] === 1) {
+                velocity[i][j] += 0.1; 
+                if (j < rows - 1 && grid[i][j + 1] === 0) {
+                    grid[i][j + 1] = 1;
+                    grid[i][j] = 0;
+                    velocity[i][j + 1] = velocity[i][j];
+                    velocity[i][j] = 0;
+                }
+            }
+        }
+    }
 }
