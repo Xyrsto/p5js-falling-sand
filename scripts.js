@@ -86,16 +86,19 @@ function draw() {
     }
     grid = nextGrid
 
+    terminal_velocity = 10.0 
     // Increases velocity constantly, if the cell below is empty, moves the cell down and resets velocity
     for (let i = 0; i < cols; i++) {
         for (let j = rows - 1; j >= 0; j--) {
             if (grid[i][j] === 1) {
                 velocity[i][j] += 0.1; 
+                if(velocity[i][j] > terminal_velocity) {
+                    velocity[i][j] = terminal_velocity;
+                }
                 if (j < rows - 1 && grid[i][j + 1] === 0) {
                     grid[i][j + 1] = 1;
                     grid[i][j] = 0;
                     velocity[i][j + 1] = velocity[i][j];
-                    velocity[i][j] = 0;
                 }
             }
         }
