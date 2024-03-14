@@ -1,22 +1,21 @@
-
 function make2DArray(cols, rows) {
-    let arr = new Array(cols)
+    let arr = new Array(cols);
     for (let i = 0; i < arr.length; i++) {
-        arr[i] = new Array(rows)
+        arr[i] = new Array(rows);
         for (let j = 0; j < arr[i].length; j++) {
-            arr[i][j] = 0
+            arr[i][j] = 0;
         }
     }
-    return arr
+    return arr;
 }
 
 let grid;
 let w = 5;
 let cols, rows;
 let hueValue = 200;
-let velocity
+let velocity;
 function setup() {
-    createCanvas(600, 600)
+    createCanvas(600, 600);
     colorMode(HSB, 360, 255, 255);
     cols = width / w;
     rows = height / w;
@@ -25,19 +24,19 @@ function setup() {
     for (let i = 0; i < cols; i++) {
         for (let j = 0; j < rows; j++) {
             grid[i][j] = 0;
-            velocity[i][j] = 0; 
+            velocity[i][j] = 0;
         }
     }
 }
 
 function mouseDragged() {
-    let col = floor(mouseX / w)
-    let row = floor(mouseY / w)
-    grid[col][row] = 1
+    let col = floor(mouseX / w);
+    let row = floor(mouseY / w);
+    grid[col][row] = 1;
 }
 
 function draw() {
-    background(0)
+    background(0);
 
     if (mouseIsPressed) {
         hueValue += 0.5;
@@ -48,12 +47,11 @@ function draw() {
 
     for (let i = 0; i < cols; i++) {
         for (let j = 0; j < rows; j++) {
-            noStroke()
+            noStroke();
             if (grid[i][j] > 0) {
-                fill(hueValue, 255, 255)
-                square(i * w, j * w, w)
+                fill(hueValue, 255, 255);
+                square(i * w, j * w, w);
             }
-
         }
     }
 
@@ -62,40 +60,28 @@ function draw() {
         for (let j = 0; j < rows; j++) {
             let state = grid[i][j];
             if (state === 1) {
-                let dir = random(1) < 0.5 ? -1 : 1
-                let neighborBelow = grid[i][j + 1]
-                let neighborBelowA, neighborBelowB
-                if (i + dir >= 0 && i + dir <= cols - 1) {
-                    neighborBelowA = grid[i + dir][j + 1]
-                }
-                if (i - dir >= 0 && i - dir <= cols - 1) {
-                    neighborBelowB = grid[i - dir][j + 1]
-                }
+                velocity[i][j] += 0.1;
 
-                if (neighborBelow === 0) {
-                    nextGrid[i][j + 1] = 1
-                } else if (neighborBelowA === 0) {
-                    nextGrid[i + dir][j] = 1
-                } else if (neighborBelowB === 0) {
-                    nextGrid[i - dir][j] = 1
-                } else {
-                    nextGrid[i][j] = 1
-                }
+                let dir = random(1) < 0.5 ? -1 : 1;
+                let neighborBelow = grid[i][j + 1];
+                let neighborBelowA, neighborBelowB;
+
+                if (i + dir >= 0 && i + dir <= cols - 1) neighborBelowA = grid[i + dir][j + 1];
+                if (i - dir >= 0 && i - dir <= cols - 1) neighborBelowB = grid[i - dir][j + 1];
+
+                if (neighborBelow === 0) nextGrid[i][j + 1] = 1;
+                else if (neighborBelowA === 0) nextGrid[i + dir][j] = 1;
+                else if (neighborBelowB === 0) nextGrid[i - dir][j] = 1;
+                else nextGrid[i][j] = 1;
             }
         }
     }
-    grid = nextGrid
+    grid = nextGrid;
 
-    terminal_velocity = 10.0 
     // Increases velocity constantly, if the cell below is empty, moves the cell down and resets velocity
     for (let i = 0; i < cols; i++) {
         for (let j = rows - 1; j >= 0; j--) {
-            velocity[i][j] = 0;
             if (grid[i][j] === 1) {
-                velocity[i][j] += 0.1; 
-                if(velocity[i][j] > terminal_velocity) {
-                    velocity[i][j] = terminal_velocity;
-                }
                 if (j < rows - 1 && grid[i][j + 1] === 0) {
                     grid[i][j + 1] = 1;
                     grid[i][j] = 0;
